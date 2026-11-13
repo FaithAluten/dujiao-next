@@ -16,6 +16,7 @@ import (
 	paypaladapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/paypal"
 	stripeadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/stripe"
 	tokenpayadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/tokenpay"
+	vmqfoxadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/vmqfox"
 	wechatpayadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/wechatpay"
 	paymentprovider "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/provider"
 	"github.com/dujiao-next/internal/queue"
@@ -61,6 +62,7 @@ func newPaymentProviderRegistry() *paymentprovider.Registry {
 	registry.Register(constants.PaymentProviderOfficial, constants.PaymentChannelTypeWechat, wechatpayadapter.NewWechatpayAdapter())
 	registry.Register(constants.PaymentProviderOfficial, constants.PaymentChannelTypeAlipay, alipayadapter.NewAlipayAdapter())
 	registry.Register(constants.PaymentProviderEpay, "", epayadapter.NewEpayAdapter())
+	registry.Register(constants.PaymentProviderVmqfox, "", vmqfoxadapter.NewVmqfoxAdapter())
 	registry.Register(constants.PaymentProviderEpusdt, "", epusdtadapter.NewEpusdtAdapter())
 	registry.Register(constants.PaymentProviderBepusdt, "", bepusdtadapter.NewBepusdtAdapter())
 	registry.Register(constants.PaymentProviderDujiaoPay, "", dujiaopayadapter.NewDujiaoPayAdapter())

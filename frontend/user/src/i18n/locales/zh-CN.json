@@ -1232,6 +1232,7 @@
       "epay": "易支付",
       "bepusdt": "BEpusdt",
       "epusdt": "epusdt",
+      "vmqfox": "V免签Fox",
       "tokenpay": "TokenPay"
     },
     "modeQr": "二维码支付",

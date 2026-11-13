@@ -91,6 +91,13 @@ const paypalConfig = reactive({
   exchange_rate: '',
 })
 
+const vmqfoxConfig = reactive({
+  gateway_url: '',
+  merchant_key: '',
+  notify_url: '',
+  return_url: '',
+})
+
 const stripeConfig = reactive({
   secret_key: '',
   publishable_key: '',
@@ -241,6 +248,9 @@ const memberLevelOptions = computed(() =>
 )
 
 const formChannelOptions = computed(() => {
+  if (form.provider_type === 'vmqfox') {
+    return epayChannelOptions.filter((option) => option.value !== 'qqpay')
+  }
   if (form.provider_type === 'epay') {
     return epayChannelOptions
   }
@@ -257,6 +267,9 @@ const formChannelOptions = computed(() => {
 })
 
 const interactionModeOptions = computed(() => {
+  if (form.provider_type === 'vmqfox') {
+    return [{ value: 'redirect', label: 'admin.paymentChannels.interactionModes.redirect' }]
+  }
   if (form.provider_type === 'epay') {
     return [
       { value: 'qr', label: 'admin.paymentChannels.interactionModes.qr' },
@@ -463,6 +476,12 @@ const resetDujiaoPayConfig = () => {
 
 const resetAllConfigs = () => {
   resetEpayConfig()
+  Object.assign(vmqfoxConfig, {
+    gateway_url: '',
+    merchant_key: '',
+    notify_url: `${window.location.origin}/api/v1/payments/callback`,
+    return_url: `${window.location.origin}/pay`,
+  })
   resetPaypalConfig()
   resetStripeConfig()
   resetAlipayConfig()
@@ -862,8 +881,8 @@ watch(
     if (applyingChannelData.value) {
       return
     }
-    if (value === 'epay') {
-      const allowed = epayChannelOptions.map((option) => option.value)
+    if (value === 'epay' || value === 'vmqfox') {
+      const allowed = formChannelOptions.value.map((option) => option.value)
       if (!allowed.includes(form.channel_type)) {
         form.channel_type = allowed[0] || 'wechat'
       }
@@ -1046,6 +1065,9 @@ watch(
         form.sort_order = channel.sort_order || 0
         if (channel.config_json && typeof channel.config_json === 'object') {
           applyEpayConfig(channel.config_json)
+          for (const key of Object.keys(vmqfoxConfig) as (keyof typeof vmqfoxConfig)[]) {
+            vmqfoxConfig[key] = String(channel.config_json[key] || '')
+          }
           applyPaypalConfig(channel.config_json)
           applyStripeConfig(channel.config_json)
           applyAlipayConfig(channel.config_json)
@@ -1124,6 +1146,14 @@ const handleSubmit = async () => {
     configJson = {
       ...configJson,
       ...buildEpayConfig(),
+    }
+  } else if (form.provider_type === 'vmqfox') {
+    configJson = {
+      ...configJson,
+      gateway_url: vmqfoxConfig.gateway_url.trim(),
+      merchant_key: vmqfoxConfig.merchant_key,
+      notify_url: vmqfoxConfig.notify_url.trim(),
+      return_url: vmqfoxConfig.return_url.trim(),
     }
   } else if (form.provider_type === 'official' && form.channel_type === 'paypal') {
     delete configJson.target_currency
@@ -1274,6 +1304,7 @@ const closeModal = () => {
                   </span>
                 </SelectItem>
                 <SelectItem value="epay">{{ t('admin.paymentChannels.providerTypes.epay') }}</SelectItem>
+                <SelectItem value="vmqfox">{{ t('admin.paymentChannels.providerTypes.vmqfox') }}</SelectItem>
                 <SelectItem value="bepusdt">{{ t('admin.paymentChannels.providerTypes.bepusdt') }}</SelectItem>
                 <SelectItem value="epusdt">{{ t('admin.paymentChannels.providerTypes.epusdt') }}</SelectItem>
                 <SelectItem value="okpay">{{ t('admin.paymentChannels.providerTypes.okpay') }}</SelectItem>
@@ -1359,6 +1390,28 @@ const closeModal = () => {
           <div class="mt-2 flex flex-col gap-2 sm:mt-6 sm:flex-row sm:items-center">
             <Switch v-model="form.is_active" />
             <Label class="text-xs text-muted-foreground">{{ t('admin.common.enabled') }}</Label>
+          </div>
+        </div>
+
+        <div v-if="form.provider_type === 'vmqfox'" class="min-w-0 rounded-lg border border-border bg-muted/20 p-4 overflow-hidden">
+          <div class="text-sm font-semibold text-foreground mb-3">{{ t('admin.paymentChannels.modal.vmqfoxSection') }}</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="min-w-0">
+              <Label for="vmqfox-gateway">{{ t('admin.paymentChannels.modal.gatewayUrl') }}</Label>
+              <Input id="vmqfox-gateway" v-model="vmqfoxConfig.gateway_url" :placeholder="t('admin.paymentChannels.modal.gatewayUrlPlaceholder')" />
+            </div>
+            <div class="min-w-0">
+              <Label for="vmqfox-key">{{ t('admin.paymentChannels.modal.vmqfoxKey') }}</Label>
+              <Input id="vmqfox-key" v-model="vmqfoxConfig.merchant_key" type="password" autocomplete="new-password" />
+            </div>
+            <div class="min-w-0">
+              <Label for="vmqfox-notify">{{ t('admin.paymentChannels.modal.notifyUrl') }}</Label>
+              <Input id="vmqfox-notify" v-model="vmqfoxConfig.notify_url" :placeholder="t('admin.paymentChannels.modal.notifyUrlPlaceholder')" />
+            </div>
+            <div class="min-w-0">
+              <Label for="vmqfox-return">{{ t('admin.paymentChannels.modal.returnUrl') }}</Label>
+              <Input id="vmqfox-return" v-model="vmqfoxConfig.return_url" :placeholder="t('admin.paymentChannels.modal.returnUrlPlaceholder')" />
+            </div>
           </div>
         </div>
 

@@ -115,6 +115,7 @@ const providerTypeLabel = (value?: string) => {
   const map: Record<string, string> = {
     official: t('admin.paymentChannels.providerTypes.official'),
     epay: t('admin.paymentChannels.providerTypes.epay'),
+    vmqfox: t('admin.paymentChannels.providerTypes.vmqfox'),
     bepusdt: t('admin.paymentChannels.providerTypes.bepusdt'),
     epusdt: t('admin.paymentChannels.providerTypes.epusdt'),
     okpay: t('admin.paymentChannels.providerTypes.okpay'),
@@ -336,6 +337,7 @@ watch(
                 </span>
               </SelectItem>
               <SelectItem value="epay">{{ t('admin.paymentChannels.providerTypes.epay') }}</SelectItem>
+              <SelectItem value="vmqfox">{{ t('admin.paymentChannels.providerTypes.vmqfox') }}</SelectItem>
               <SelectItem value="bepusdt">{{ t('admin.paymentChannels.providerTypes.bepusdt') }}</SelectItem>
               <SelectItem value="epusdt">{{ t('admin.paymentChannels.providerTypes.epusdt') }}</SelectItem>
               <SelectItem value="okpay">{{ t('admin.paymentChannels.providerTypes.okpay') }}</SelectItem>

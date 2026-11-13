@@ -1280,6 +1280,7 @@
       "epay": "易支付",
       "bepusdt": "BEpusdt",
       "epusdt": "epusdt",
+      "vmqfox": "V免簽Fox",
       "tokenpay": "TokenPay"
     },
     "modeQr": "二維碼支付",

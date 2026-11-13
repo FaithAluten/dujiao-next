@@ -1280,6 +1280,7 @@
       "epay": "Epay",
       "bepusdt": "BEpusdt",
       "epusdt": "epusdt",
+      "vmqfox": "Vmqfox",
       "tokenpay": "TokenPay"
     },
     "modeQr": "QR payment",

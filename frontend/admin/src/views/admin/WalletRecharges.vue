@@ -103,6 +103,7 @@ const providerTypeLabel = (value?: string) => {
   const map: Record<string, string> = {
     official: t('admin.paymentChannels.providerTypes.official'),
     epay: t('admin.paymentChannels.providerTypes.epay'),
+    vmqfox: t('admin.paymentChannels.providerTypes.vmqfox'),
     epusdt: t('admin.paymentChannels.providerTypes.epusdt'),
     tokenpay: t('admin.paymentChannels.providerTypes.tokenpay'),
     wallet: t('admin.paymentChannels.providerTypes.wallet'),
@@ -166,6 +167,7 @@ onMounted(() => {
               <SelectItem value="__all__">{{ t('admin.walletRecharges.filterProviderAll') }}</SelectItem>
               <SelectItem value="official">{{ t('admin.paymentChannels.providerTypes.official') }}</SelectItem>
               <SelectItem value="epay">{{ t('admin.paymentChannels.providerTypes.epay') }}</SelectItem>
+              <SelectItem value="vmqfox">{{ t('admin.paymentChannels.providerTypes.vmqfox') }}</SelectItem>
               <SelectItem value="epusdt">{{ t('admin.paymentChannels.providerTypes.epusdt') }}</SelectItem>
               <SelectItem value="tokenpay">{{ t('admin.paymentChannels.providerTypes.tokenpay') }}</SelectItem>
               <SelectItem value="wallet">{{ t('admin.paymentChannels.providerTypes.wallet') }}</SelectItem>

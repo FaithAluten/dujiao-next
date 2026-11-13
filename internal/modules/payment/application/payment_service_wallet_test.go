@@ -22,6 +22,7 @@ import (
 	paypaladapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/paypal"
 	stripeadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/stripe"
 	tokenpayadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/tokenpay"
+	vmqfoxadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/vmqfox"
 	wechatpayadapter "github.com/dujiao-next/internal/modules/payment/infrastructure/gateway/adapters/wechatpay"
 
 	paymentgormstore "github.com/dujiao-next/internal/modules/payment/infrastructure/gormstore"
@@ -57,6 +58,26 @@ import (
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 )
+
+func TestValidateVmqfoxChannel(t *testing.T) {
+	service, _ := setupPaymentServiceWalletTest(t)
+	channel := &paymentdomain.PaymentChannel{
+		ProviderType: constants.PaymentProviderVmqfox, ChannelType: constants.PaymentChannelTypeAlipay,
+		InteractionMode: constants.PaymentInteractionRedirect,
+		ConfigJSON: jsonmap.JSON{
+			"gateway_url": "https://pay.example.com", "merchant_key": "test-key",
+			"notify_url": "https://shop.example.com/api/v1/payments/callback",
+			"return_url": "https://shop.example.com/pay",
+		},
+	}
+	if err := service.ValidateChannel(channel); err != nil {
+		t.Fatalf("valid vmqfox channel rejected: %v", err)
+	}
+	channel.InteractionMode = constants.PaymentInteractionQR
+	if err := service.ValidateChannel(channel); !errors.Is(err, ErrPaymentChannelConfigInvalid) {
+		t.Fatalf("QR mode accepted: %v", err)
+	}
+}
 
 func setupPaymentServiceWalletTest(t *testing.T) (*PaymentService, *gorm.DB) {
 	t.Helper()
@@ -102,6 +123,7 @@ func setupPaymentServiceWalletTest(t *testing.T) (*PaymentService, *gorm.DB) {
 	reg.Register(constants.PaymentProviderOfficial, constants.PaymentChannelTypeWechat, wechatpayadapter.NewWechatpayAdapter())
 	reg.Register(constants.PaymentProviderOfficial, constants.PaymentChannelTypeAlipay, alipayadapter.NewAlipayAdapter())
 	reg.Register(constants.PaymentProviderEpay, "", epayadapter.NewEpayAdapter())
+	reg.Register(constants.PaymentProviderVmqfox, "", vmqfoxadapter.NewVmqfoxAdapter())
 	reg.Register(constants.PaymentProviderEpusdt, "", epusdtadapter.NewEpusdtAdapter())
 	reg.Register(constants.PaymentProviderBepusdt, "", bepusdtadapter.NewBepusdtAdapter())
 	reg.Register(constants.PaymentProviderDujiaoPay, "", dujiaopayadapter.NewDujiaoPayAdapter())

@@ -266,6 +266,31 @@ go build -tags release,fullstack -o dujiao-next ./cmd/server
 Note that admin uses `build:fullstack`, not `build`. Plain `build` produces a bundle pinned to
 `/`, which silently breaks a custom `web.admin_path`.
 
+## Vmqfox Payments
+
+In **Payment Channels**, select **Vmqfox**, choose Alipay or WeChat, and use
+redirect mode. This provider connects directly to vmqfox's v2 API; installing an
+epay site or its PHP plugin is not required.
+
+| Configuration | Value |
+| --- | --- |
+| `gateway_url` | Public vmqfox server URL, for example `https://pay.example.com` |
+| `merchant_key` | Exact communication key from vmqfox system settings |
+| `notify_url` | Final HTTPS shop URL ending in `/api/v1/payments/callback` |
+| `return_url` | Shop storefront URL ending in `/pay` |
+
+Only CNY is supported. Orders are created with a server-side form POST to
+`/api/order/create`, signed with HMAC-SHA-256, and buyers open the returned
+vmqfox cashier. The cashier displays any adjusted payment amount. Signed
+notifications are matched against the original merchant `price`; the adjusted
+`reallyPrice` is retained for reconciliation. Browser returns do not mark an
+order paid.
+
+The monitor must be online and a matching collection QR code configured in
+vmqfox. Use the final HTTPS notification URL because vmqfox does not follow
+redirects. For private-network deployments, configure vmqfox's
+`VMQ_NOTIFY_ALLOW_CIDR` to allow the shop's callback address.
+
 ## Testing
 
 ```bash

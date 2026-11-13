@@ -231,6 +231,7 @@ const providerTypeLabel = (value?: string) => {
   const map: Record<string, string> = {
     official: t('admin.paymentChannels.providerTypes.official'),
     epay: t('admin.paymentChannels.providerTypes.epay'),
+    vmqfox: t('admin.paymentChannels.providerTypes.vmqfox'),
     bepusdt: t('admin.paymentChannels.providerTypes.bepusdt'),
     epusdt: t('admin.paymentChannels.providerTypes.epusdt'),
     tokenpay: t('admin.paymentChannels.providerTypes.tokenpay'),
